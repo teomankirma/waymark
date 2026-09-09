@@ -1,0 +1,16 @@
+# Dependencies and generated output
+node_modules/
+dist/
+dist-ssr/
+coverage/
+playwright-report/
+test-results/
+.playwright-cli/
+package-lock.json
+
+# Imported skill reference material
+.agents/skills/
+
+# Local credentials
+.env
+.env.*
