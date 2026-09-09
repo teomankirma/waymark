@@ -59,3 +59,9 @@ See [Contract boundaries](docs/CONTRACTS.md) for the v1 format and validation en
 TypeScript strict mode is enabled for all projects; automation/tests additionally check unchecked indexed access. Server code will be checked by the same Node configuration when introduced. Runtime code stays under `automation/`, UI code under `src/`, and future target backend code under `server/`. No automation modules are imported into the frontend.
 
 Each implementation PR uses small commits and stops for user review before the next PR. UI work will initialize shadcn/ui and compose its primitives into focused, accessible React components.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs `npm ci`, formatting, lint, offline tests, and the all-project type check/production build on every pull request and push to `main`. It also supports manual dispatch after the workflow reaches the default branch. The `Quality checks` job uses Node.js 22, npm caching, read-only repository permissions, a ten-minute timeout, and cancellation of superseded runs. Actions are pinned to commit SHAs.
+
+The current personal repository uses GitHub-hosted Ubuntu 24.04 runners. [Blacksmith requires an organization-owned repository](https://docs.blacksmith.sh/introduction/quickstart). After an explicitly authorized transfer and Blacksmith installation for that repository, change `runs-on` to `blacksmith-2vcpu-ubuntu-2404`; the check steps can stay the same. This workflow does not change repository ownership, app permissions, or branch protection. Making `Quality checks` mandatory for merging requires a separate repository rule.

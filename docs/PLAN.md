@@ -97,11 +97,13 @@ Acceptance: force session expiry, manually restore access in the same browser co
 
 ## 7. End-to-end evidence and checks
 
+Baseline CI was brought forward into PR #3: install, formatting, lint, offline contract tests, and type checking/build on PRs and main. It uses GitHub-hosted runners while the repository is personal; Blacksmith requires organization ownership. Browser scenarios and end-to-end evidence remain pending.
+
 Suggested branch: `end-to-end-evidence`.
 
 - Run genuine discovery, successful parameterized replay, known business outcome, bounded recovery, policy denial, and live human takeover scenarios.
 - Store the saved capability and sanitized discovery/replay logs under evidence/, with a manifest identifying command, scenario, artifact version, outcome, and whether the run used a real model or a fixture.
-- Add a small GitHub Actions workflow for npm ci, formatting, lint, complete TypeScript/build checks, and offline tests/browser scenarios. CI must not require model credentials.
+- Extend the existing GitHub Actions workflow with offline browser scenarios as implemented. Preserve npm ci, formatting, lint, complete TypeScript/build checks, and offline tests. CI must not require model credentials.
 - Keep generated failures and local raw outputs ignored; commit only deliberately reviewed demonstration evidence.
 
 Acceptance: a clean checkout runs documented offline checks and replay without a model key. The evidence proves the implemented behavior and contains no invented success claims or sensitive values.
