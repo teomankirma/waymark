@@ -10,7 +10,8 @@ The repository currently contains a minimal frontend and installed dependencies.
 
 - Use npm and retain package-lock.json. Use `npm ci` for reproducible installs.
 - Frontend: React + TypeScript + Vite, with the existing React Compiler enabled.
-- Styling: Tailwind CSS through @tailwindcss/vite. Keep the UI simple and accessible.
+- Styling: Tailwind CSS through @tailwindcss/vite. Use shadcn/ui for all UI components, composing its primitives for application components. Keep semantic HTML for document structure and preserve accessibility.
+- Follow React best practices: focused components, explicit typed props, minimal state, derived values during render, effects only for external synchronization, and no unnecessary manual memoization with React Compiler.
 - Backend: Express. Automation: Playwright. Runtime schemas: Zod.
 - Discovery: Anthropic TypeScript SDK behind a provider boundary; tsx runs scripts.
 - Keep server code and secrets out of browser imports and bundles.
@@ -55,7 +56,7 @@ No application test suite or discovery/replay commands exist yet. Add and docume
 
 ## Git workflow
 
-Use small PRs, Conventional Commits, and squash merges. Name branches with descriptive kebab-case names and no prefixes (for example `member-search`, not `codex/member-search` or `feat/member-search`). After a successful merge, sync local main, delete the merged branch locally and on GitHub, and prune stale remote-tracking references. Before deleting a squash-merged local branch, confirm its PR was merged and no unmerged work would be lost.
+Use small PRs and small, coherent Conventional Commits. Stop after opening each PR and notify the user for code review. Do not begin the next PR or merge without the user’s review/authorization. Use squash merges when authorized. Name branches with descriptive kebab-case names and no prefixes (for example `member-search`, not `codex/member-search` or `feat/member-search`). After a successful merge, sync local main, delete the merged branch locally and on GitHub, and prune stale remote-tracking references. Before deleting a squash-merged local branch, confirm its PR was merged and no unmerged work would be lost.
 
 Keep changes reviewable. Commit, push, and merge within the user's authorization for the current work; do not treat a planning request as permission to implement or publish the entire plan. Do not deploy or email submissions without user authorization.
 
