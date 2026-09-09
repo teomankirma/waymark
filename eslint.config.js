@@ -19,4 +19,15 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: ['automation/**/*.ts', 'server/**/*.ts', 'tests/**/*.ts'],
+    languageOptions: {
+      globals: {
+        ...Object.fromEntries(
+          Object.keys(globals.browser).map((key) => [key, 'off']),
+        ),
+        ...globals.node,
+      },
+    },
+  },
 ])

@@ -8,17 +8,19 @@ The first workflow is: search for a fictional member, open their profile, open t
 
 ## Current baseline
 
-Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, Express, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. The app currently displays a minimal placeholder. No backend, discovery, replay, or handoff implementation exists yet.
+Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, Express, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. The app currently displays a minimal placeholder. Milestone 1 contracts and offline validation tests are implemented on the first implementation PR, pending user review. No backend, executor, discovery, replay, or handoff implementation exists yet.
 
 ## Delivery workflow
 
 Use small PRs with Conventional Commit titles and squash merges. Use descriptive kebab-case branch names without prefixes, for example `capability-contracts` or `member-search`. After a successful merge, sync local main, remove the merged branch locally and on GitHub, and prune stale remote-tracking references. For squash merges, verify the PR is merged and its work is preserved before deleting the local branch; do not rely solely on Git ancestry.
 
-The stages below are ordered milestones, not a requirement to make each stage one large PR. Split independently reviewable changes when useful. Record test results and known limitations in each PR. Publication and merging follow the user's authorization for the work being performed.
+The stages below are ordered milestones, not a requirement to make each stage one large PR. Split independently reviewable changes when useful. Use small, coherent commits within each PR and stop for user review before beginning the next PR or merging. Use shadcn/ui for UI components and follow React best practices. Record test results and known limitations in each PR. Publication and merging follow the user's authorization for the work being performed.
 
 ## 1. Contracts and execution boundaries
 
 Suggested branch: `capability-contracts`.
+
+Status: implemented, pending PR review. See [Contract boundaries](CONTRACTS.md). Validation: 18 offline tests, all-project type checking/production build, ESLint, and Prettier. Policy/session schemas describe contracts only; enforcement and state transitions belong to later milestones.
 
 - Define Zod schemas for actions, parameter references, target descriptions, checkpoints, extracted outputs, and versioned capability artifacts.
 - Define separate result variants for success, expected business outcomes, and failures. Represent intervention/session state separately from terminal results.
@@ -95,11 +97,13 @@ Acceptance: force session expiry, manually restore access in the same browser co
 
 ## 7. End-to-end evidence and checks
 
+Baseline CI was brought forward into PR #3: install, formatting, lint, offline contract tests, and type checking/build on PRs and main. It uses GitHub-hosted runners while the repository is personal; Blacksmith requires organization ownership. Browser scenarios and end-to-end evidence remain pending.
+
 Suggested branch: `end-to-end-evidence`.
 
 - Run genuine discovery, successful parameterized replay, known business outcome, bounded recovery, policy denial, and live human takeover scenarios.
 - Store the saved capability and sanitized discovery/replay logs under evidence/, with a manifest identifying command, scenario, artifact version, outcome, and whether the run used a real model or a fixture.
-- Add a small GitHub Actions workflow for npm ci, formatting, lint, complete TypeScript/build checks, and offline tests/browser scenarios. CI must not require model credentials.
+- Extend the existing GitHub Actions workflow with offline browser scenarios as implemented. Preserve npm ci, formatting, lint, complete TypeScript/build checks, and offline tests. CI must not require model credentials.
 - Keep generated failures and local raw outputs ignored; commit only deliberately reviewed demonstration evidence.
 
 Acceptance: a clean checkout runs documented offline checks and replay without a model key. The evidence proves the implemented behavior and contains no invented success claims or sensitive values.
