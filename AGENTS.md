@@ -55,7 +55,11 @@ No application test suite or discovery/replay commands exist yet. Add and docume
 
 ## Git workflow
 
-Prefer small PRs, Conventional Commits, and squash merges when that workflow is active. For the current setup phase, work locally without requiring a PR. Keep changes reviewable and leave them uncommitted unless the user requests commits. Do not push, merge, deploy, or email submissions without user authorization.
+Use small PRs, Conventional Commits, and squash merges. Name branches with descriptive kebab-case names and no prefixes (for example `member-search`, not `codex/member-search` or `feat/member-search`). After a successful merge, sync local main, delete the merged branch locally and on GitHub, and prune stale remote-tracking references. Before deleting a squash-merged local branch, confirm its PR was merged and no unmerged work would be lost.
+
+Keep changes reviewable. Commit, push, and merge within the user's authorization for the current work; do not treat a planning request as permission to implement or publish the entire plan. Do not deploy or email submissions without user authorization.
+
+Follow docs/PLAN.md for the staged implementation and acceptance criteria. Update plan status as milestones are completed.
 
 ## Project-local skills
 

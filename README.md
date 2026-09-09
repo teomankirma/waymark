@@ -6,6 +6,8 @@ Learn UI workflows once. Replay them reliably. Hand off when needed.
 
 Initial project setup only. The banking demo, discovery loop, replay engine, and human handoff are not implemented yet.
 
+See [Implementation plan](docs/PLAN.md) for the implementation sequence and acceptance criteria.
+
 ## Setup
 
 Use Node.js 22.12 or later on a supported release line, with npm.
