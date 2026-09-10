@@ -22,7 +22,9 @@ export function SavingsAccount({ memberId }: { memberId: string }) {
     'idle' | 'confirming' | 'pending' | 'denied' | 'error'
   >('idle')
   const trigger = useRef<HTMLButtonElement>(null)
+  const confirmation = useRef<HTMLDivElement>(null)
   useEffect(() => {
+    if (action === 'confirming') confirmation.current?.focus()
     if (action === 'denied' || action === 'error') trigger.current?.focus()
   }, [action])
   return (
@@ -65,36 +67,42 @@ export function SavingsAccount({ memberId }: { memberId: string }) {
             </div>
           </div>
           <div className="space-y-4 border-t pt-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-muted-foreground">
-                Account closure requires supervisor permission.
-              </p>
+            <div className="flex justify-end">
               <Button
                 ref={trigger}
-                variant="outline"
+                variant="destructive"
                 className="min-h-11"
                 disabled={action === 'pending'}
                 aria-expanded={action === 'confirming' || action === 'pending'}
+                aria-controls={
+                  action === 'confirming' || action === 'pending'
+                    ? 'closure-confirmation'
+                    : undefined
+                }
                 onClick={() => setAction('confirming')}
               >
-                Close account…
+                Close account
               </Button>
             </div>
             {action === 'confirming' || action === 'pending' ? (
-              <Alert>
+              <Alert
+                id="closure-confirmation"
+                ref={confirmation}
+                role="group"
+                tabIndex={-1}
+                aria-labelledby="closure-title"
+                aria-describedby="closure-description"
+                className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              >
                 <AlertTitle id="closure-title">
                   Request account closure?
                 </AlertTitle>
                 <AlertDescription>
-                  <p>
+                  <p id="closure-description">
                     This action requires supervisor permission. No account will
                     be closed in this training environment.
                   </p>
-                  <div
-                    role="group"
-                    aria-labelledby="closure-title"
-                    className="mt-2 flex flex-wrap gap-3"
-                  >
+                  <div className="mt-2 flex flex-wrap gap-3">
                     <Button
                       variant="outline"
                       className="min-h-11"

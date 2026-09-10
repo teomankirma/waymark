@@ -88,11 +88,14 @@ test('restricted closure leaves the balance unchanged', async ({ page }) => {
   await page.goto('/members/DEMO-001/savings')
   const frame = page.frameLocator('iframe[title="Savings account details"]')
   await frame
-    .getByRole('button', { name: 'Close account…', exact: true })
+    .getByRole('button', { name: 'Close account', exact: true })
     .click()
   await expect(
     frame.getByRole('group', { name: 'Request account closure?' }),
   ).toBeVisible()
+  await expect(
+    frame.getByRole('group', { name: 'Request account closure?' }),
+  ).toBeFocused()
   await expect
     .poll(async () =>
       frame
@@ -104,9 +107,14 @@ test('restricted closure leaves the balance unchanged', async ({ page }) => {
     )
     .toBe(true)
   await frame.getByRole('button', { name: 'Cancel', exact: true }).click()
-  await expect(frame.getByRole('alert')).toHaveCount(0)
+  await expect(
+    frame.getByRole('group', { name: 'Request account closure?' }),
+  ).toHaveCount(0)
+  await expect(
+    frame.getByRole('button', { name: 'Close account', exact: true }),
+  ).toBeFocused()
   await frame
-    .getByRole('button', { name: 'Close account…', exact: true })
+    .getByRole('button', { name: 'Close account', exact: true })
     .click()
   await frame
     .getByRole('button', { name: 'Check permission', exact: true })
