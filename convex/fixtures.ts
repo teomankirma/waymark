@@ -26,15 +26,30 @@ const members = [
 
 // Operator-only fixtures; these mutations are not callable from the public client.
 export const seed = internalMutation({
-  args: {},
+  args: { reset: v.optional(v.boolean()) },
   returns: v.null(),
-  handler: async (ctx) => {
+  handler: async (ctx, { reset = false }) => {
     for (const member of members) {
       const existing = await ctx.db
         .query('members')
         .withIndex('by_member_id', (q) => q.eq('id', member.id))
         .unique()
       if (!existing) await ctx.db.insert('members', member)
+      else if (reset) await ctx.db.replace('members', existing._id, member)
+    }
+    for (const [index, member] of members.entries()) {
+      const existing = await ctx.db
+        .query('savings')
+        .withIndex('by_memberId', (q) => q.eq('memberId', member.id))
+        .unique()
+      const account = {
+        memberId: member.id,
+        accountNumber: `SAV-100${index + 1}`,
+        balance: ['12450.75', '8320.10', '560.00'][index],
+        currency: 'USD' as const,
+      }
+      if (!existing) await ctx.db.insert('savings', account)
+      else if (reset) await ctx.db.replace('savings', existing._id, account)
     }
     const settings = await ctx.db
       .query('settings')
@@ -45,6 +60,11 @@ export const seed = internalMutation({
         key: 'demo',
         scenario: 'normal',
         revision: 0,
+      })
+    else if (reset)
+      await ctx.db.patch('settings', settings._id, {
+        scenario: 'normal',
+        revision: settings.revision + 1,
       })
     return null
   },

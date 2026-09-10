@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as details from "../details.js";
 import type * as fixtures from "../fixtures.js";
 import type * as members from "../members.js";
 
@@ -18,6 +19,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  details: typeof details;
   fixtures: typeof fixtures;
   members: typeof members;
 }>;
