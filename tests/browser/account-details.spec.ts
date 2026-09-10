@@ -97,7 +97,10 @@ test('restricted closure leaves the balance unchanged', async ({ page }) => {
     .poll(async () =>
       frame
         .locator('body')
-        .evaluate('body => body.scrollHeight <= window.innerHeight'),
+        .evaluate(
+          (body) =>
+            body.scrollHeight <= body.ownerDocument.defaultView.innerHeight,
+        ),
     )
     .toBe(true)
   await frame.getByRole('button', { name: 'Cancel', exact: true }).click()
