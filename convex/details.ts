@@ -16,16 +16,25 @@ async function access(ctx: QueryCtx) {
     .query('settings')
     .withIndex('by_key', (q) => q.eq('key', 'demo'))
     .unique()
-  if (!settings) return 'unavailable' as const
-  if (settings.scenario === 'slow') return 'loading' as const
+
+  if (!settings) {
+    return 'unavailable' as const
+  }
+
+  if (settings.scenario === 'slow') {
+    return 'loading' as const
+  }
+
   return settings.scenario === 'normal' ? null : settings.scenario
 }
+
 async function memberById(ctx: QueryCtx, id: string) {
   return ctx.db
     .query('members')
     .withIndex('by_member_id', (q) => q.eq('id', id))
     .unique()
 }
+
 export const profile = query({
   args: { memberId: v.string() },
   returns: v.union(
@@ -38,14 +47,23 @@ export const profile = query({
   ),
   handler: async (ctx, { memberId }) => {
     const status = await access(ctx)
-    if (status) return { status }
+
+    if (status) {
+      return { status }
+    }
+
     const member = await memberById(ctx, memberId)
-    if (!member) return { status: 'not_found' as const }
+
+    if (!member) {
+      return { status: 'not_found' as const }
+    }
+
     const savings = await ctx.db
       .query('savings')
       .withIndex('by_memberId', (q) => q.eq('memberId', memberId))
       .unique()
     const { id, name, branch, memberSince } = member
+
     return {
       status: 'success' as const,
       member: { id, name, branch, memberSince },
@@ -67,14 +85,23 @@ export const savings = query({
   ),
   handler: async (ctx, { memberId }) => {
     const status = await access(ctx)
-    if (status) return { status }
+
+    if (status) {
+      return { status }
+    }
+
     const member = await memberById(ctx, memberId)
     const account = await ctx.db
       .query('savings')
       .withIndex('by_memberId', (q) => q.eq('memberId', memberId))
       .unique()
-    if (!member || !account) return { status: 'not_found' as const }
+
+    if (!member || !account) {
+      return { status: 'not_found' as const }
+    }
+
     const { id, name, branch, memberSince } = member
+
     return {
       status: 'success' as const,
       member: { id, name, branch, memberSince },
@@ -93,11 +120,14 @@ export const restoreSession = mutation({
       .query('settings')
       .withIndex('by_key', (q) => q.eq('key', 'demo'))
       .unique()
-    if (settings?.scenario === 'expired')
+
+    if (settings?.scenario === 'expired') {
       await ctx.db.patch('settings', settings._id, {
         scenario: 'normal',
         revision: settings.revision + 1,
       })
+    }
+
     return null
   },
 })

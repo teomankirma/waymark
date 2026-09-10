@@ -22,8 +22,14 @@ export function useDetailQuery<
   const result = responses.detail as FunctionReturnType<Q> | Error | undefined
   const online = useNetworkOnline()
   const connection = useConvexConnectionState()
-  if (!online || !connection.isWebSocketConnected)
+
+  if (!online || !connection.isWebSocketConnected) {
     return { status: 'unavailable' as const }
-  if (result instanceof Error) return { status: 'unavailable' as const }
+  }
+
+  if (result instanceof Error) {
+    return { status: 'unavailable' as const }
+  }
+
   return result
 }

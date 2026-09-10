@@ -11,7 +11,11 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 // Preserve decimal cents even for values beyond JavaScript's safe integer range.
 function displayBalance(value: string) {
   const match = /^(-?)(\d+)\.(\d{2})$/.exec(value)
-  if (!match) return value
+
+  if (!match) {
+    return value
+  }
+
   return `${match[1]}${new Intl.NumberFormat('en-US').format(BigInt(match[2]))}.${match[3]}`
 }
 
@@ -23,10 +27,17 @@ export function SavingsAccount({ memberId }: { memberId: string }) {
   >('idle')
   const trigger = useRef<HTMLButtonElement>(null)
   const confirmation = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    if (action === 'confirming') confirmation.current?.focus()
-    if (action === 'denied' || action === 'error') trigger.current?.focus()
+    if (action === 'confirming') {
+      confirmation.current?.focus()
+    }
+
+    if (action === 'denied' || action === 'error') {
+      trigger.current?.focus()
+    }
   }, [action])
+
   return (
     <main className="space-y-6 p-5 sm:p-7">
       <title>Savings account · Waymark</title>
@@ -119,6 +130,7 @@ export function SavingsAccount({ memberId }: { memberId: string }) {
                       disabled={action === 'pending'}
                       onClick={async () => {
                         setAction('pending')
+
                         try {
                           await closeAccount({ memberId })
                           setAction('denied')

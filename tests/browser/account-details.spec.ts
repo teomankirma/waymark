@@ -1,7 +1,9 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { expect, test } from '@playwright/test'
+
 const exec = promisify(execFile)
+
 async function scenario(
   scenario: 'normal' | 'denied' | 'expired' | 'slow' | 'unavailable',
 ) {
@@ -12,6 +14,7 @@ async function scenario(
     JSON.stringify({ scenario }),
   ])
 }
+
 test.beforeEach(async () => {
   await scenario('normal')
 })
@@ -33,7 +36,9 @@ for (const [id, name, balance] of [
       .click()
     await expect(page.getByText(id, { exact: true })).toBeVisible()
     await page.getByRole('link', { name: 'View savings account' }).click()
+
     const frame = page.frameLocator('iframe[title="Savings account details"]')
+
     await expect(frame.getByText(name, { exact: true })).toBeVisible()
     await expect(frame.getByText(id, { exact: true })).toBeVisible()
     await expect(frame.getByText(balance, { exact: true })).toBeVisible()
@@ -53,7 +58,9 @@ test('session expiry hides details and restores the same page', async ({
   page,
 }) => {
   await page.goto('/members/DEMO-001/savings')
+
   const frame = page.frameLocator('iframe[title="Savings account details"]')
+
   await expect(frame.getByText('12,450.75', { exact: true })).toBeVisible()
   await scenario('expired')
   await expect(page.getByRole('alert')).toContainText('Session expired')
@@ -68,6 +75,7 @@ test('direct account URL respects permission and unavailable states', async ({
 }) => {
   await page.goto('/account-panel/DEMO-002')
   await expect(page.getByText('8,320.10', { exact: true })).toBeVisible()
+
   for (const [value, text] of [
     ['denied', 'Access denied'],
     ['unavailable', 'Records unavailable'],
@@ -77,6 +85,7 @@ test('direct account URL respects permission and unavailable states', async ({
     await expect(page.getByRole('alert')).toContainText(text)
     await expect(page.getByText('8,320.10', { exact: true })).toHaveCount(0)
   }
+
   await page.getByRole('button', { name: 'Restore demo session' }).click()
   await expect(page.getByText('8,320.10', { exact: true })).toBeVisible()
   await scenario('slow')
@@ -86,7 +95,9 @@ test('direct account URL respects permission and unavailable states', async ({
 
 test('restricted closure leaves the balance unchanged', async ({ page }) => {
   await page.goto('/members/DEMO-001/savings')
+
   const frame = page.frameLocator('iframe[title="Savings account details"]')
+
   await frame
     .getByRole('button', { name: 'Close account', exact: true })
     .click()

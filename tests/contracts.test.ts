@@ -17,11 +17,15 @@ import { balanceCapability } from './capability.fixture.ts'
 test('a serializable balance contract binds two members without changing its actions', () => {
   const artifact = balanceCapability()
   const serialized = JSON.stringify(artifact)
+
   assert.deepEqual(capabilitySchema.parse(JSON.parse(serialized)), artifact)
+
   const fill = artifact.steps.find(
     (step) => step.action.kind === 'fill',
   )?.action
+
   assert.ok(fill?.kind === 'fill')
+
   for (const memberId of ['DEMO-001', 'DEMO-002']) {
     assert.equal(
       resolveValue(fill.value, parseInvocation(artifact, { memberId })),
@@ -29,6 +33,7 @@ test('a serializable balance contract binds two members without changing its act
     )
     assert.ok(!serialized.includes(memberId))
   }
+
   assert.equal(JSON.stringify(artifact), serialized)
   assert.throws(() => resolveValue({ kind: 'input', name: 'missing' }, {}))
 })
@@ -48,6 +53,7 @@ for (const action of [
 
 test('reject unsupported versions, extra fields and duplicate steps', () => {
   const artifact = balanceCapability()
+
   assert.equal(
     capabilitySchema.safeParse({ ...artifact, schemaVersion: 2 }).success,
     false,
@@ -75,9 +81,12 @@ test('reject undeclared references in action values, targets and checkpoints', (
     ),
   )
   const result = capabilitySchema.safeParse(invalid)
+
   assert.equal(result.success, false)
+
   if (!result.success) {
     const paths = result.error.issues.map((issue) => issue.path.join('.'))
+
     assert.ok(paths.some((path) => path.includes('action.value.name')))
     assert.ok(paths.some((path) => path.includes('locator.name.name')))
     assert.ok(paths.some((path) => path.includes('expected.name')))
@@ -87,6 +96,7 @@ test('reject undeclared references in action values, targets and checkpoints', (
 test('output writers must match declared outputs exactly once', () => {
   const artifact = balanceCapability()
   const steps = artifact.steps.filter((step) => step.action.kind !== 'read')
+
   assert.equal(
     capabilitySchema.safeParse({ ...artifact, steps }).success,
     false,
@@ -98,7 +108,9 @@ test('output writers must match declared outputs exactly once', () => {
     }).success,
     false,
   )
+
   const read = artifact.steps.find((step) => step.action.kind === 'read')!
+
   assert.equal(
     capabilitySchema.safeParse({
       ...artifact,
@@ -124,7 +136,9 @@ test('invocation rejects missing, extra, empty, overlong and non-string inputs',
 test('outputs preserve exact money and reject undeclared or malformed values', () => {
   const artifact = balanceCapability()
   const outputs = { balance: '9007199254740993.01', currency: 'USD' }
+
   assert.deepEqual(parseOutputs(artifact, outputs), outputs)
+
   for (const invalid of [
     { ...outputs, balance: 10.1 },
     { ...outputs, balance: '1e3' },
@@ -132,12 +146,14 @@ test('outputs preserve exact money and reject undeclared or malformed values', (
     { ...outputs, currency: 'usd' },
     { ...outputs, extra: 'value' },
     { balance: '1.00' },
-  ])
+  ]) {
     assert.throws(() => parseOutputs(artifact, invalid))
+  }
 })
 
 test('terminal results are validated against capability outputs and outcomes', () => {
   const artifact = balanceCapability()
+
   assert.equal(
     parseResult(artifact, {
       status: 'success',
@@ -164,6 +180,7 @@ test('terminal results are validated against capability outputs and outcomes', (
     }).status,
     'failure',
   )
+
   for (const result of [
     {
       status: 'success',
@@ -172,8 +189,9 @@ test('terminal results are validated against capability outputs and outcomes', (
     { status: 'business_outcome', code: 'unknown', stepId: 'search' },
     { status: 'business_outcome', code: 'member_not_found', stepId: 'unknown' },
     { status: 'human_control', owner: 'human' },
-  ])
+  ]) {
     assert.throws(() => parseResult(artifact, result))
+  }
 })
 
 test('policy requires bounded execution and exact origin/path pairs', () => {
@@ -184,7 +202,9 @@ test('policy requires bounded execution and exact origin/path pairs', () => {
     maxSteps: 20,
     maxRunMs: 60_000,
   }
+
   assert.equal(policySchema.safeParse(policy).success, true)
+
   for (const patch of [
     { maxSteps: 0 },
     { maxRunMs: Infinity },
@@ -197,8 +217,9 @@ test('policy requires bounded execution and exact origin/path pairs', () => {
     {
       allowedRoutes: [{ origin: 'http://localhost:3000/path', pathname: '/' }],
     },
-  ])
+  ]) {
     assert.equal(policySchema.safeParse({ ...policy, ...patch }).success, false)
+  }
 })
 
 test('human takeover and resume verification cannot claim automation ownership', () => {
@@ -208,6 +229,7 @@ test('human takeover and resume verification cannot claim automation ownership',
     summary: 'Restore the demo session',
     resumeCheckpoint: balanceCapability().success[0],
   }
+
   for (const [state, owner] of [
     ['automating', 'automation'],
     ['awaiting_human', 'none'],
@@ -221,13 +243,17 @@ test('human takeover and resume verification cannot claim automation ownership',
       sessionId: 'demo-session',
       ...(['automating', 'closed'].includes(state!) ? {} : { intervention }),
     }
+
     assert.equal(sessionSchema.safeParse(session).success, true)
-    if (state !== 'automating')
+
+    if (state !== 'automating') {
       assert.equal(
         sessionSchema.safeParse({ ...session, owner: 'automation' }).success,
         false,
       )
+    }
   }
+
   assert.equal(
     sessionSchema.safeParse({
       state: 'human_control',
@@ -258,6 +284,7 @@ test('all six action variants parse and reject invalid nested targets', () => {
     locator: { by: 'label', text: { kind: 'literal', value: 'Account' } },
   }
   const checkpoint = { kind: 'visible', target }
+
   for (const action of [
     { kind: 'navigate', url: 'http://localhost:3000' },
     { kind: 'click', target },
@@ -265,8 +292,10 @@ test('all six action variants parse and reject invalid nested targets', () => {
     { kind: 'select', target, value: { kind: 'literal', value: 'savings' } },
     { kind: 'read', target, output: 'balance' },
     { kind: 'assert', checkpoint },
-  ])
+  ]) {
     assert.equal(actionSchema.safeParse(action).success, true)
+  }
+
   assert.equal(
     actionSchema.safeParse({
       kind: 'click',
@@ -278,6 +307,7 @@ test('all six action variants parse and reject invalid nested targets', () => {
 
 test('duplicate outcomes and reserved field names are rejected', () => {
   const artifact = balanceCapability()
+
   assert.equal(
     capabilitySchema.safeParse({
       ...artifact,
