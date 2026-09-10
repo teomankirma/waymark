@@ -1,5 +1,6 @@
 import { v } from 'convex/values'
 import { query } from './_generated/server'
+import { normalizeSearch } from './searchText'
 import { memberFields } from './schema'
 
 export const search = query({
@@ -15,8 +16,10 @@ export const search = query({
     v.object({ status: v.literal('unavailable') }),
   ),
   handler: async (ctx, args) => {
-    const term = args.query.trim()
-    if (!term || term.length > 64) return { status: 'invalid' as const }
+    const raw = args.query.trim()
+    const term = normalizeSearch(raw)
+    if (raw.length > 64 || (raw.length > 0 && !term))
+      return { status: 'invalid' as const }
     const settings = await ctx.db
       .query('settings')
       .withIndex('by_key', (q) => q.eq('key', 'demo'))
@@ -24,19 +27,17 @@ export const search = query({
     if (settings?.scenario === 'unavailable')
       return { status: 'unavailable' as const }
     if (settings?.scenario === 'slow') return { status: 'loading' as const }
-    const rows = /^DEMO-/i.test(term)
+    const rows = term
       ? await ctx.db
           .query('members')
-          .withIndex('by_member_id', (q) =>
-            q
-              .gte('id', term.toUpperCase())
-              .lt('id', `${term.toUpperCase()}\uffff`),
+          .withSearchIndex('search_members', (q) =>
+            q.search('searchText', term),
           )
           .take(21)
-      : await ctx.db
-          .query('members')
-          .withSearchIndex('search_name', (q) => q.search('name', term))
-          .take(21)
+      : await ctx.db.query('members').withIndex('by_member_id').take(21)
+    rows.sort(
+      (a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id),
+    )
     return {
       status: 'success' as const,
       hasMore: rows.length > 20,

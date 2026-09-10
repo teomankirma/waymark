@@ -4,7 +4,7 @@ Learn UI workflows once. Replay them reliably. Hand off when needed.
 
 ## Status
 
-Member search uses anonymous **local Convex** with a shadcn React interface. Results update 250 ms after typing stops; Enter submits immediately. The capability contracts are implemented. Profiles, savings details, discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
+Member search uses anonymous **local Convex** with a shadcn React interface. The directory shows members immediately and filters 250 ms after typing stops; Enter applies the query immediately. The capability contracts are implemented. Member profiles and savings details are implemented. Discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
 
 ## Setup and local development
 
@@ -29,7 +29,7 @@ npm run dev:backend   # Local Convex + seed only
 npm run dev:web       # Frontend only; requires the local backend
 npm run build         # Type-check application, automation, tests, Convex; build UI
 npm run typecheck     # Type checks only
-npm test              # 18 contract tests + 5 in-memory Convex tests
+npm test              # Contract tests + in-memory Convex tests
 npm run lint
 npm run format:check
 npm run format
@@ -42,9 +42,9 @@ Stop the dev servers before browser tests: the runner owns the same local Convex
 
 ## Visual review
 
-Type `Mor` for Avery Morgan and Sam Morgan, `DEMO-001` for Avery, `DEMO-00` for all three demo members, or `DEMO-999` for no results. Names use Convex full-text search with word-prefix matching, not arbitrary substring matching. IDs beginning with `DEMO-` use a case-insensitive prefix index. Results are capped at 20 with an explicit prompt to narrow the search when more exist.
+Type `Mor` for Avery Morgan and Sam Morgan, `DEMO-001` for Avery, `DEMO-00` for all three demo members, or `DEMO-999` for no results. Names and IDs support contains matching, ignoring case, whitespace, punctuation, and accents: `demo`, `demo001`, `001`, `org`, and `avery morg` all work. This is partial matching, not typo correction. A bounded suffix search index provides these matches without scanning the table. Searchable ID/name text is limited to 64 normalized characters per field. Results are capped at 20 with an explicit prompt to narrow the search when more exist.
 
-Editing or clearing a query hides previous results immediately. Typing remains enabled while results load. Convex subscriptions update automatically when matching data or demo availability changes, and connection loss replaces results with a reconnect message. Results are read-only in this slice; profiles and account navigation come next.
+While editing, previous matches remain dimmed with inactive profile links until fresh results arrive. Clearing restores the member directory. Typing remains enabled while results load. Convex subscriptions update automatically when matching data or demo availability changes, and connection loss replaces results with a reconnect message. Choose the visible **View profile** action, then **View savings account** or the **Savings** section link. The account panel shows the same member ID and name with an exact decimal balance and explicit currency. React Router navigation preserves `?q=` through profiles and savings, so returning to the directory, browser back, and reload retain the search.
 
 With the backend running, use a separate terminal to exercise operator-only fixtures:
 
@@ -52,15 +52,22 @@ With the backend running, use a separate terminal to exercise operator-only fixt
 npm run demo:scenario -- '{"scenario":"unavailable"}'
 npm run demo:scenario -- '{"scenario":"normal"}'
 npm run demo:scenario -- '{"scenario":"slow"}'
+npm run demo:scenario -- '{"scenario":"denied"}'
+npm run demo:scenario -- '{"scenario":"expired"}'
+node scripts/convex-local.mjs run fixtures:seed '{"reset":true}'
 ```
 
 The unavailable scenario persists until changed. Slow simulates a 1.5-second loading state and automatically returns to normal; run it while a search is visible. Its scheduled recovery cannot overwrite a newer scenario. These internal mutations are accessible through the local CLI, not the public browser API. Seeding is idempotent and preserves existing records and scenario state; use normal to restore availability.
 
-Browser tests exercise the real local Convex backend: live typing, rapid edits, clearing, empty results, validation, keyboard submit, reactive scenario recovery, and offline/reconnect behavior on desktop/mobile Chromium. Unit tests use the official `convex-test` in-memory implementation for indexed queries, validation, result limits, idempotent seeding, and scheduled recovery. No test calls an LLM or saves screenshots/traces.
+The denied and expired scenarios block profile and savings reads, including direct account-panel URLs. Search remains available for these scenarios. **Restore demo session** returns an expired demo to normal on the same page; it cannot bypass denied access. These are shared training scenarios across all tabs, not real authentication or per-user sessions. The public restore mutation only clears expiry. **Close account… → Check permission** always returns a backend denial and never changes a record.
+
+The savings panel uses a titled same-origin iframe for later frame-aware automation. It sizes to its contents; account closure requires a confirmation before checking permission. The frame is a navigation boundary, not a security boundary. Known fixture balances are `DEMO-001: 12450.75 USD`, `DEMO-002: 8320.10 USD`, and `DEMO-003: 560.00 USD`. Explicit reset restores these three demo members/accounts and normal availability; it preserves unrelated records. Ordinary startup preserves existing balances.
+
+Browser tests cover search → profile → savings for two members, frame identity and balances, back/reload, expiry and restore, denied/unavailable/loading states, missing records, and restricted closure. They also exercise the real local Convex backend: live typing, rapid edits, clearing, empty results, validation, keyboard submit, reactive scenario recovery, and offline/reconnect behavior on desktop/mobile Chromium. Unit tests use the official `convex-test` in-memory implementation for indexed queries, validation, result limits, idempotent seeding, and scheduled recovery. No test calls an LLM or saves screenshots/traces.
 
 ## Stack and boundaries
 
-- React, TypeScript, Vite, React Compiler, Tailwind, and shadcn/ui (Radix Nova).
+- React, React Router, TypeScript, Vite, React Compiler, Tailwind, and shadcn/ui (Radix Nova).
 - Convex functions, indexed database, subscriptions, and internal fixture mutations under `convex/`.
 - Browser-safe generated API references/types connect the frontend to Convex; fixture records stay in backend modules.
 - Playwright for browser tests and future automation; Zod for versioned automation contracts.
@@ -83,3 +90,7 @@ When live discovery is implemented, configure `ANTHROPIC_API_KEY` locally; never
 CI uses GitHub-hosted Ubuntu runners, Node.js 22, pinned actions, npm caching, read-only repository permissions, bounded runtime, and cancellation of superseded runs. [Blacksmith requires an organization-owned repository](https://docs.blacksmith.sh/introduction/quickstart); the personal repo remains on GitHub-hosted runners. Making Quality checks mandatory at merge requires a separate repository rule.
 
 Every implementation PR stops for user review. UI components use shadcn and follow React best practices.
+
+## UX acceptance
+
+See [UX review](docs/UX.md) for the current search/navigation acceptance criteria. Basic usability is part of each feature PR, not a deferred polish milestone.
