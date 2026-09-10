@@ -10,5 +10,10 @@
     {
       "path": "./tsconfig.automation.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }
