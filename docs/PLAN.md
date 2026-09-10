@@ -8,7 +8,9 @@ The first workflow is: search for a fictional member, open their profile, open t
 
 ## Current baseline
 
-Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, Express, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. Milestone 1 contracts and CI merged in PR #3. The member-search slice adds a shadcn UI, fictional Express API, and API/browser tests, pending review. No profiles, account details, executor, discovery, replay, or handoff exists yet.
+Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, local Convex, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. Milestone 1 contracts and CI merged in PR #3. The member-search slice adds a shadcn UI, fictional local Convex backend, live debounced search, and Convex/browser tests, pending review. No profiles, account details, executor, discovery, replay, or handoff exists yet.
+
+The user selected local Convex instead of Express and automatic filtering while typing. Keep the backend anonymous/local, install official Convex agent skills at project level, and preserve the separate UI-only automation boundary.
 
 ## Delivery workflow
 
@@ -26,7 +28,7 @@ Status: merged in PR #3. See [Contract boundaries](CONTRACTS.md). Validation: 18
 - Define separate result variants for success, expected business outcomes, and failures. Represent intervention/session state separately from terminal results.
 - Define a surface adapter interface for observation, target resolution, actions, and evidence capture. Keep browser details inside the browser adapter.
 - Define policy configuration and session ownership states before writing execution logic.
-- Establish source boundaries: frontend under src/, target backend under server/, automation under automation/, and meaningful tests under tests/. Introduce directories only when they contain implementation.
+- Establish source boundaries: frontend under src/, target backend under convex/, automation under automation/, and meaningful tests under tests/. Introduce directories only when they contain implementation.
 - Add backend/automation TypeScript checks and offline test commands. Keep one npm project initially.
 
 Acceptance: contracts reject malformed actions, unsupported artifact versions, invalid inputs, and undeclared outputs. Examples demonstrate a parameterized balance lookup without embedding a discovery member ID in the reusable action sequence.
@@ -35,10 +37,10 @@ Acceptance: contracts reject malformed actions, unsupported artifact versions, i
 
 Suggested branches: `member-search`, then `account-details`.
 
-Status: member-search slice implemented, pending review. Exact ID/partial name lookup, shadcn table, loading/empty/error states, normal/slow/unavailable fixtures, and API/browser tests are complete. Profiles, savings details, frame boundary, permission/session scenarios, and restricted mock account actions remain for the next slice.
+Status: member-search slice implemented, pending review. Indexed ID/name-prefix lookup with automatic filtering, shadcn table, loading/empty/error states, normal/slow/unavailable fixtures, and Convex/browser tests are complete. Profiles, savings details, frame boundary, permission/session scenarios, and restricted mock account actions remain for the next slice.
 
-- Build an Express backend with fictional fixtures and a React/Tailwind interface for search, profile, and savings account views.
-- Use a modest legacy-style surface: table-based results and a frame boundary, with no test IDs. Preserve labels and keyboard access for human operators.
+- Build an anonymous local Convex backend with fictional fixtures and a React/Tailwind interface for search, profile, and savings account views.
+- Use a modern shadcn interface with debounced search-as-you-type, table-based results, and a frame boundary where required for automation coverage. Do not make UX artificially outdated. Preserve labels and keyboard access; no test IDs.
 - Add deterministic fixture scenarios for unknown members, validation errors, denied access, slow/failed loads, and session expiry. Keep scenario setup outside the automation's observation/action interface.
 - Include a restricted mock account action for policy verification; implement no real financial transactions.
 - Provide repeatable fixture reset and commands to start frontend/backend together or separately.
@@ -124,4 +126,4 @@ Acceptance: every assignment requirement maps to working code/evidence or an exp
 
 ## Deliberate exclusions
 
-No real banking access, production authentication, database, cloud deployment, distributed queues, multi-tenant infrastructure, native desktop implementation, or full operator console. Start with one workflow; add no stretch goals until the complete core works. API keys, model choice, and optional hosting do not block offline work.
+No real banking access, production authentication, external database service, cloud deployment, distributed queues, multi-tenant infrastructure, native desktop implementation, or full operator console. Start with one workflow; add no stretch goals until the complete core works. API keys, model choice, and optional hosting do not block offline work.
