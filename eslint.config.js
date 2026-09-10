@@ -20,7 +20,12 @@ export default defineConfig([
     },
   },
   {
-    files: ['automation/**/*.ts', 'server/**/*.ts', 'tests/**/*.ts'],
+    files: [
+      'automation/**/*.ts',
+      'server/**/*.ts',
+      'tests/**/*.ts',
+      'playwright.config.ts',
+    ],
     languageOptions: {
       globals: {
         ...Object.fromEntries(
