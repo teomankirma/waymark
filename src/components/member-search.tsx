@@ -89,7 +89,6 @@ export function MemberSearch() {
     <div className="space-y-6">
       <title>Member directory · Waymark</title>
       <div>
-        <p className="mb-2 text-sm font-medium text-primary">Member services</p>
         <h1 className="text-3xl font-semibold tracking-tight">
           Member directory
         </h1>

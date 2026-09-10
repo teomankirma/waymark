@@ -7,7 +7,7 @@ import {
   useLocation,
   useParams,
 } from 'react-router'
-import { Landmark, UsersRound } from 'lucide-react'
+import { Landmark } from 'lucide-react'
 import { MemberProfile } from '@/components/member-profile'
 import { SavingsAccount } from '@/components/savings-account'
 import { Button } from '@/components/ui/button'
@@ -56,19 +56,7 @@ function Workspace() {
               </span>
             </span>
           </Link>
-          <div className="flex items-center gap-4">
-            <Button
-              asChild
-              variant="ghost"
-              className="hidden min-h-11 sm:inline-flex"
-            >
-              <Link to={`/${search}`}>
-                <UsersRound aria-hidden="true" />
-                Member directory
-              </Link>
-            </Button>
-            <Badge variant="secondary">Fictional banking demo</Badge>
-          </div>
+          <Badge variant="secondary">Fictional banking demo</Badge>
         </div>
       </header>
       <main
