@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import type { FunctionReturnType } from 'convex/server'
 import type { api } from '../../convex/_generated/api'
 type Member = Extract<
@@ -40,7 +41,13 @@ export function MemberResults({
         {members.map((member) => (
           <TableRow key={member.id}>
             <TableCell className="font-mono text-xs">{member.id}</TableCell>
-            <TableCell className="font-medium">{member.name}</TableCell>
+            <TableCell className="font-medium">
+              <Button asChild variant="link" className="h-auto p-0">
+                <a href={`/members/${encodeURIComponent(member.id)}`}>
+                  {member.name}
+                </a>
+              </Button>
+            </TableCell>
             <TableCell>{member.branch}</TableCell>
             <TableCell className="text-right tabular-nums">
               {member.memberSince}
