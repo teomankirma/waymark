@@ -25,10 +25,13 @@ export function MemberSearch() {
   const [settledQuery, setSettledQuery] = useState(normalized)
   const input = useRef<HTMLInputElement>(null)
   const valid = normalized.length <= 64
+
   useEffect(() => {
     const timer = setTimeout(() => setSettledQuery(normalized), 250)
+
     return () => clearTimeout(timer)
   }, [normalized])
+
   const ready = valid && normalized === settledQuery
   const responses = useQueries(
     valid
@@ -42,6 +45,7 @@ export function MemberSearch() {
     result: SearchSuccess
     query: string
   }>()
+
   // Retain the last completed result while the next query loads; its links are disabled.
   if (
     ready &&
@@ -52,6 +56,7 @@ export function MemberSearch() {
   ) {
     setSnapshot({ result, query: settledQuery })
   }
+
   const connection = useConvexConnectionState()
   const online = useNetworkOnline()
   const disconnected = !online || !connection.isWebSocketConnected
@@ -82,9 +87,11 @@ export function MemberSearch() {
           : success
             ? `${success.members.length}${success.hasMore ? '+' : ''} ${success.members.length === 1 ? 'member' : 'members'} found`
             : 'Member directory'
+
   function updateQuery(value: string) {
     setParams(value ? { q: value } : {}, { replace: true })
   }
+
   return (
     <div className="space-y-6">
       <title>Member directory · Waymark</title>

@@ -18,13 +18,23 @@ function Workspace() {
   const { pathname, search } = useLocation()
   const main = useRef<HTMLElement>(null)
   const previousPath = useRef(pathname)
+
   useEffect(() => {
     const previous = previousPath.current
+
     previousPath.current = pathname
-    if (previous === pathname) return
+
+    if (previous === pathname) {
+      return
+    }
+
     const previousMember = /^\/members\/([^/]+)/.exec(previous)?.[1]
     const currentMember = /^\/members\/([^/]+)/.exec(pathname)?.[1]
-    if (previousMember && previousMember === currentMember) return
+
+    if (previousMember && previousMember === currentMember) {
+      return
+    }
+
     main.current?.focus({ preventScroll: true })
     window.scrollTo(0, 0)
   }, [pathname])
@@ -73,8 +83,10 @@ function Workspace() {
     </div>
   )
 }
+
 function ProfileRoute({ showSavings = false }: { showSavings?: boolean }) {
   const { memberId = '' } = useParams()
+
   return (
     <MemberProfile
       key={memberId}
@@ -83,10 +95,13 @@ function ProfileRoute({ showSavings = false }: { showSavings?: boolean }) {
     />
   )
 }
+
 function AccountRoute() {
   const { memberId = '' } = useParams()
+
   return <SavingsAccount key={memberId} memberId={memberId} />
 }
+
 export default function App() {
   return (
     <Routes>

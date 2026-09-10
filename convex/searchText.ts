@@ -11,10 +11,14 @@ export function normalizeSearch(value: string) {
 // contains matching without scanning the member table. At most 128 suffixes.
 export function memberSearchText(member: { id: string; name: string }) {
   const tokens = new Set<string>()
+
   for (const value of [member.id, member.name]) {
     const characters = Array.from(normalizeSearch(value)).slice(0, 64)
-    for (let i = 0; i < characters.length; i++)
+
+    for (let i = 0; i < characters.length; i++) {
       tokens.add(characters.slice(i).join(''))
+    }
   }
+
   return [...tokens].join(' ')
 }

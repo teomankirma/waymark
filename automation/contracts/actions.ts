@@ -26,6 +26,7 @@ const locatorSchema = z.discriminatedUnion('by', [
     reason: textSchema,
   }),
 ])
+
 export const targetSchema = z.strictObject({
   description: textSchema,
   // Outer to inner frame selectors; [] means the top-level document.

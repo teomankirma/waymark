@@ -7,6 +7,7 @@ const originSchema = webUrlSchema.refine(
   (value) => URL.canParse(value) && new URL(value).origin === value,
   'Use a canonical origin without a path',
 )
+
 export const policySchema = z.strictObject({
   // Exact origin/path pairs, not independent lists that permit cross-products.
   allowedRoutes: z
@@ -19,6 +20,7 @@ export const policySchema = z.strictObject({
           .max(2048)
           .refine((path) => {
             const url = new URL(path, 'https://policy.invalid')
+
             return (
               url.origin === 'https://policy.invalid' &&
               url.pathname === path &&
@@ -75,20 +77,25 @@ export const resultSchema = z.discriminatedUnion('status', [
 
 export function parseResult(artifact: Capability, data: unknown) {
   const result = resultSchema.parse(data)
-  if (result.status === 'success')
+
+  if (result.status === 'success') {
     return { ...result, outputs: parseOutputs(artifact, result.outputs) }
+  }
+
   if (
     result.stepId !== null &&
     !artifact.steps.some((step) => step.id === result.stepId)
   ) {
     throw new Error('Result references an unknown step')
   }
+
   if (
     result.status === 'business_outcome' &&
     !artifact.businessOutcomes.some((outcome) => outcome.code === result.code)
   ) {
     throw new Error('Undeclared business outcome')
   }
+
   return result
 }
 

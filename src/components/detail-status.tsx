@@ -32,14 +32,18 @@ export function DetailStatus({
   const restore = useMutation(api.details.restoreSession)
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
-  if (!status || status === 'loading')
+
+  if (!status || status === 'loading') {
     return (
       <div role="status" className="space-y-4">
         <p>Loading records…</p>
         <Skeleton className="h-32 w-full" />
       </div>
     )
+  }
+
   const [title, description] = messages[status]
+
   return (
     <Alert variant="destructive">
       <AlertTitle>{title}</AlertTitle>
@@ -51,6 +55,7 @@ export function DetailStatus({
             onClick={async () => {
               setPending(true)
               setFailed(false)
+
               try {
                 await restore({})
               } catch {

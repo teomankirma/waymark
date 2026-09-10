@@ -17,22 +17,42 @@ export class BrowserSurfaceError extends Error {
 }
 
 export function surfaceError(error: unknown, closed: boolean) {
-  if (error instanceof BrowserSurfaceError) return error
-  if (closed) return new BrowserSurfaceError('session_closed')
-  if (error instanceof errors.TimeoutError)
+  if (error instanceof BrowserSurfaceError) {
+    return error
+  }
+
+  if (closed) {
+    return new BrowserSurfaceError('session_closed')
+  }
+
+  if (error instanceof errors.TimeoutError) {
     return new BrowserSurfaceError('timeout')
-  if (error instanceof Error && error.message.includes('strict mode violation'))
+  }
+
+  if (
+    error instanceof Error &&
+    error.message.includes('strict mode violation')
+  ) {
     return new BrowserSurfaceError('ambiguous_target')
+  }
+
   return new BrowserSurfaceError('unexpected_state')
 }
 
 export function deadline(timeoutMs: number) {
-  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 60_000)
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 60_000) {
     throw new BrowserSurfaceError('invalid_input')
+  }
+
   const end = performance.now() + timeoutMs
+
   return () => {
     const remaining = Math.ceil(end - performance.now())
-    if (remaining <= 0) throw new BrowserSurfaceError('timeout')
+
+    if (remaining <= 0) {
+      throw new BrowserSurfaceError('timeout')
+    }
+
     return remaining
   }
 }
@@ -43,6 +63,7 @@ export async function boundedRead<T>(
   timeoutMs: number,
 ): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined
+
   try {
     return await Promise.race([
       operation,

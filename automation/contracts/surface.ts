@@ -28,6 +28,7 @@ type Bound<T> = T extends { kind: 'input'; name: string }
     : T extends object
       ? { [Key in keyof T]: Bound<T[Key]> }
       : T
+
 export type BoundTarget = Bound<Target>
 export type BoundCheckpoint = Bound<Checkpoint>
 export type Interaction = Extract<

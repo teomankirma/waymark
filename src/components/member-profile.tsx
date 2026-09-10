@@ -33,6 +33,7 @@ export function MemberProfile({
   const { search } = useLocation()
   const profilePath = `/members/${encodeURIComponent(memberId)}`
   const member = result?.status === 'success' ? result.member : undefined
+
   return (
     <div className="space-y-6">
       <title>

@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
 type Member = Extract<
   FunctionReturnType<typeof api.members.search>,
   { status: 'success' }
@@ -27,6 +28,7 @@ export function MemberResults({
   updating?: boolean
 }) {
   const search = query ? `?${new URLSearchParams({ q: query })}` : ''
+
   return (
     <Table>
       <TableCaption className="sr-only">
@@ -75,7 +77,9 @@ export function MemberResults({
                   aria-disabled={updating || undefined}
                   tabIndex={updating ? -1 : undefined}
                   onClick={(event) => {
-                    if (updating) event.preventDefault()
+                    if (updating) {
+                      event.preventDefault()
+                    }
                   }}
                 >
                   View profile

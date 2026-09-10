@@ -32,7 +32,8 @@ npm run typecheck     # Type checks only
 npm test              # Contract tests + in-memory Convex tests
 npm run lint
 npm run format:check
-npm run format
+npm run format        # Fix ESLint readability rules, then run Prettier
+npm run lint:fix      # Apply ESLint fixes only
 npm run preview       # Production UI build at port 4173; backend required
 npx playwright install chromium
 npm run test:browser  # After build; starts local Convex + seed + preview
@@ -96,3 +97,7 @@ Every implementation PR stops for user review. UI components use shadcn and foll
 ## UX acceptance
 
 See [UX review](docs/UX.md) for the current search/navigation acceptance criteria. Basic usability is part of each feature PR, not a deferred polish milestone.
+
+## Code readability
+
+See [Code style](docs/CODE_STYLE.md). ESLint enforces braces and structural blank lines across maintained source, tests, and scripts; Prettier handles indentation and wrapping. Run `npm run format` to apply both. CI rejects violations through the existing lint and formatting checks.

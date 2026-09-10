@@ -8,7 +8,7 @@
     "build": "npm run typecheck && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier . --write",
+    "format": "npm run lint:fix && prettier . --write",
     "format:check": "prettier . --check",
     "typecheck": "tsc -b && tsc --noEmit -p convex/tsconfig.json",
     "test": "npm run test:contracts && npm run test:convex",
@@ -18,7 +18,8 @@
     "setup:local": "node scripts/convex-local.mjs dev --once",
     "test:contracts": "tsx --test tests/*.test.ts",
     "test:convex": "vitest run",
-    "demo:scenario": "node scripts/convex-local.mjs run fixtures:setScenario"
+    "demo:scenario": "node scripts/convex-local.mjs run fixtures:setScenario",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
@@ -43,6 +44,7 @@
     "@playwright/cli": "^0.1.19",
     "@playwright/test": "^1.63.0",
     "@rolldown/plugin-babel": "^0.2.3",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/babel__core": "^7.20.5",
     "@types/node": "^24.13.3",

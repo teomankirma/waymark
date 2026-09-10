@@ -1,7 +1,9 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { expect, test } from '@playwright/test'
+
 const exec = promisify(execFile)
+
 async function scenario(value: 'normal' | 'slow' | 'unavailable') {
   await exec(process.execPath, [
     'scripts/convex-local.mjs',
@@ -36,6 +38,7 @@ test('typing a name prefix filters without submission', async ({ page }) => {
 
 test('rapid edits and clearing cannot show stale results', async ({ page }) => {
   const input = page.getByLabel('Member ID or name')
+
   await input.fill('Mor')
   await expect(page.getByText('Sam Morgan', { exact: true })).toBeVisible()
   await input.fill('DEMO-001')
@@ -65,6 +68,7 @@ test('blank and whitespace browse members; invalid punctuation has recovery', as
 
 test('Enter still submits immediately', async ({ page }) => {
   const input = page.getByLabel('Member ID or name')
+
   await input.fill('DEMO-001')
   await input.press('Enter')
   await expect(page.getByText('Avery Morgan', { exact: true })).toBeVisible()
@@ -108,6 +112,7 @@ test('partial IDs and names are forgiving, and search survives navigation', asyn
   page,
 }) => {
   const input = page.getByLabel('Member ID or name')
+
   for (const [query, count] of [
     ['demo', '3'],
     ['demo001', '1'],
@@ -120,6 +125,7 @@ test('partial IDs and names are forgiving, and search survives navigation', asyn
       `${count} ${count === '1' ? 'member' : 'members'} found`,
     )
   }
+
   await page
     .getByRole('link', { name: 'View profile for Avery Morgan' })
     .click()
@@ -143,14 +149,18 @@ test('profile actions are keyboard accessible with visible focus', async ({
 }) => {
   await page.getByLabel('Member ID or name').fill('001')
   await expect(page.getByRole('status')).toHaveText('1 member found')
+
   const link = page.getByRole('link', { name: 'View profile for Avery Morgan' })
+
   await link.focus()
   await expect(link).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(
     page.getByRole('heading', { name: 'Avery Morgan' }),
   ).toBeVisible()
+
   const savings = page.getByRole('link', { name: 'Savings', exact: true })
+
   await savings.focus()
   await page.keyboard.press('Enter')
   await expect(savings).toBeFocused()

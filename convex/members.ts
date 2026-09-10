@@ -18,15 +18,24 @@ export const search = query({
   handler: async (ctx, args) => {
     const raw = args.query.trim()
     const term = normalizeSearch(raw)
-    if (raw.length > 64 || (raw.length > 0 && !term))
+
+    if (raw.length > 64 || (raw.length > 0 && !term)) {
       return { status: 'invalid' as const }
+    }
+
     const settings = await ctx.db
       .query('settings')
       .withIndex('by_key', (q) => q.eq('key', 'demo'))
       .unique()
-    if (settings?.scenario === 'unavailable')
+
+    if (settings?.scenario === 'unavailable') {
       return { status: 'unavailable' as const }
-    if (settings?.scenario === 'slow') return { status: 'loading' as const }
+    }
+
+    if (settings?.scenario === 'slow') {
+      return { status: 'loading' as const }
+    }
+
     const rows = term
       ? await ctx.db
           .query('members')
@@ -35,9 +44,11 @@ export const search = query({
           )
           .take(21)
       : await ctx.db.query('members').withIndex('by_member_id').take(21)
+
     rows.sort(
       (a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id),
     )
+
     return {
       status: 'success' as const,
       hasMore: rows.length > 20,
