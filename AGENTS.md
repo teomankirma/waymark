@@ -98,7 +98,7 @@ Maintain README.md with setup and exact runnable demo commands. When implementin
 
 Model guidance checked 2026-09-09; verify again before model-specific API changes.
 
-Use the repository Prettier configuration; run `npm run format:check` before finishing changes. Imported skill references and generated files are excluded.
+Use `npm run format` to apply ESLint readability fixes followed by Prettier. Require braces for all control-flow bodies and blank lines around control-flow blocks, declaration groups, and class members. Keep related declarations/imports together; add further blank lines between logical phases where useful. Readability is required even when code passes functional tests. See docs/CODE_STYLE.md. Run `npm run lint` and `npm run format:check` before finishing changes. Imported skill references and generated files are excluded.
 
 <!-- convex-ai-start -->
 
