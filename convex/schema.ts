@@ -16,9 +16,9 @@ export const scenarioValidator = v.union(
 )
 
 export default defineSchema({
-  members: defineTable(memberFields)
+  members: defineTable({ ...memberFields, searchText: v.optional(v.string()) })
     .index('by_member_id', ['id'])
-    .searchIndex('search_name', { searchField: 'name' }),
+    .searchIndex('search_members', { searchField: 'searchText' }),
   savings: defineTable({
     memberId: v.string(),
     accountNumber: v.string(),

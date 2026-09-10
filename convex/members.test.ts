@@ -3,6 +3,7 @@ import { convexTest } from 'convex-test'
 import { expect, test, vi } from 'vitest'
 import { api, internal } from './_generated/api'
 import schema from './schema'
+import { memberSearchText } from './searchText'
 const modules = import.meta.glob('./**/*.ts')
 
 async function setup() {
@@ -15,6 +16,14 @@ test('indexed name and member ID prefixes return only matching members', async (
   const t = await setup()
   for (const [query, ids] of [
     ['demo-001', ['DEMO-001']],
+    ['demo', ['DEMO-001', 'DEMO-002', 'DEMO-003']],
+    ['demo001', ['DEMO-001']],
+    ['001', ['DEMO-001']],
+    ['DEMO 001', ['DEMO-001']],
+    ['org', ['DEMO-001', 'DEMO-003']],
+    ['avery morg', ['DEMO-001']],
+    ['', ['DEMO-001', 'DEMO-002', 'DEMO-003']],
+    ['  ', ['DEMO-001', 'DEMO-002', 'DEMO-003']],
     ['Mor', ['DEMO-001', 'DEMO-003']],
     ['DEMO-00', ['DEMO-001', 'DEMO-002', 'DEMO-003']],
     ['DEMO-999', []],
@@ -25,9 +34,9 @@ test('indexed name and member ID prefixes return only matching members', async (
       expect(result.members.map((m) => m.id).sort()).toEqual([...ids])
   }
 })
-test('blank and overlong searches are invalid', async () => {
+test('punctuation-only and overlong searches are invalid', async () => {
   const t = await setup()
-  for (const query of ['', '  ', 'a'.repeat(65)])
+  for (const query of ['---', 'a'.repeat(65)])
     expect(await t.query(api.members.search, { query })).toEqual({
       status: 'invalid',
     })
@@ -40,6 +49,7 @@ test('seeding is idempotent and results are bounded', async () => {
   await t.run(async (ctx) => {
     for (let i = 0; i < 25; i++)
       await ctx.db.insert('members', {
+        searchText: memberSearchText({ id: `DEMO-1${i}`, name: `Extra ${i}` }),
         id: `DEMO-1${i}`,
         name: `Extra ${i}`,
         branch: 'Test',

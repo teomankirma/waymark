@@ -11,6 +11,7 @@
 import type * as details from "../details.js";
 import type * as fixtures from "../fixtures.js";
 import type * as members from "../members.js";
+import type * as searchText from "../searchText.js";
 
 import type {
   ApiFromModules,
@@ -22,6 +23,7 @@ declare const fullApi: ApiFromModules<{
   details: typeof details;
   fixtures: typeof fixtures;
   members: typeof members;
+  searchText: typeof searchText;
 }>;
 
 /**

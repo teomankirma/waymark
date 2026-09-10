@@ -1,6 +1,7 @@
 import { v } from 'convex/values'
 import { internalMutation } from './_generated/server'
 import { internal } from './_generated/api'
+import { memberSearchText } from './searchText'
 import { scenarioValidator } from './schema'
 
 const members = [
@@ -34,8 +35,14 @@ export const seed = internalMutation({
         .query('members')
         .withIndex('by_member_id', (q) => q.eq('id', member.id))
         .unique()
-      if (!existing) await ctx.db.insert('members', member)
-      else if (reset) await ctx.db.replace('members', existing._id, member)
+      const searchText = memberSearchText(
+        existing && !reset ? existing : member,
+      )
+      if (!existing) await ctx.db.insert('members', { ...member, searchText })
+      else if (reset)
+        await ctx.db.replace('members', existing._id, { ...member, searchText })
+      else if (existing.searchText !== searchText)
+        await ctx.db.patch('members', existing._id, { searchText })
     }
     for (const [index, member] of members.entries()) {
       const existing = await ctx.db
