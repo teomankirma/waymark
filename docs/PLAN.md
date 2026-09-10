@@ -8,7 +8,7 @@ The first workflow is: search for a fictional member, open their profile, open t
 
 ## Current baseline
 
-Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, Express, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. The app currently displays a minimal placeholder. Milestone 1 contracts and offline validation tests are implemented on the first implementation PR, pending user review. No backend, executor, discovery, replay, or handoff implementation exists yet.
+Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, Express, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. Milestone 1 contracts and CI merged in PR #3. The member-search slice adds a shadcn UI, fictional Express API, and API/browser tests, pending review. No profiles, account details, executor, discovery, replay, or handoff exists yet.
 
 ## Delivery workflow
 
@@ -20,7 +20,7 @@ The stages below are ordered milestones, not a requirement to make each stage on
 
 Suggested branch: `capability-contracts`.
 
-Status: implemented, pending PR review. See [Contract boundaries](CONTRACTS.md). Validation: 18 offline tests, all-project type checking/production build, ESLint, and Prettier. Policy/session schemas describe contracts only; enforcement and state transitions belong to later milestones.
+Status: merged in PR #3. See [Contract boundaries](CONTRACTS.md). Validation: 18 offline tests, all-project type checking/production build, ESLint, and Prettier. Policy/session schemas describe contracts only; enforcement and state transitions belong to later milestones.
 
 - Define Zod schemas for actions, parameter references, target descriptions, checkpoints, extracted outputs, and versioned capability artifacts.
 - Define separate result variants for success, expected business outcomes, and failures. Represent intervention/session state separately from terminal results.
@@ -34,6 +34,8 @@ Acceptance: contracts reject malformed actions, unsupported artifact versions, i
 ## 2. Reproducible banking target
 
 Suggested branches: `member-search`, then `account-details`.
+
+Status: member-search slice implemented, pending review. Exact ID/partial name lookup, shadcn table, loading/empty/error states, normal/slow/unavailable fixtures, and API/browser tests are complete. Profiles, savings details, frame boundary, permission/session scenarios, and restricted mock account actions remain for the next slice.
 
 - Build an Express backend with fictional fixtures and a React/Tailwind interface for search, profile, and savings account views.
 - Use a modest legacy-style surface: table-based results and a frame boundary, with no test IDs. Preserve labels and keyboard access for human operators.
@@ -97,7 +99,7 @@ Acceptance: force session expiry, manually restore access in the same browser co
 
 ## 7. End-to-end evidence and checks
 
-Baseline CI was brought forward into PR #3: install, formatting, lint, offline contract tests, and type checking/build on PRs and main. It uses GitHub-hosted runners while the repository is personal; Blacksmith requires organization ownership. Browser scenarios and end-to-end evidence remain pending.
+Baseline CI was brought forward into PR #3: install, formatting, lint, offline contract tests, and type checking/build on PRs and main. It uses GitHub-hosted runners while the repository is personal; Blacksmith requires organization ownership. Member-search desktop/mobile browser scenarios have since been added; automation end-to-end evidence remains pending.
 
 Suggested branch: `end-to-end-evidence`.
 
