@@ -14,3 +14,10 @@ package-lock.json
 # Local credentials
 .env
 .env.*
+
+# Convex code generation
+convex/_generated/
+
+# Project-local skill aliases and database state
+.claude/skills/
+.convex/
