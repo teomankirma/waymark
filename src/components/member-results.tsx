@@ -1,4 +1,9 @@
-import type { Member } from '../../shared/members'
+import type { FunctionReturnType } from 'convex/server'
+import type { api } from '../../convex/_generated/api'
+type Member = Extract<
+  FunctionReturnType<typeof api.members.search>,
+  { status: 'success' }
+>['members'][number]
 import {
   Table,
   TableBody,
