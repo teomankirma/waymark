@@ -25,16 +25,26 @@ import {
 /** Opaque, adapter-owned target reference; contains no browser API. */
 export type BrowserHandle = Readonly<{ id: symbol }>
 
-type Options = { timeoutMs: number }
+type Options = { timeoutMs: number; signal?: AbortSignal }
 
 /** Internal browser primitive. It is NOT a policy or session-ownership boundary. */
 export class BrowserSurface implements SurfaceAdapter<BrowserHandle> {
   private readonly targets = new WeakMap<BrowserHandle, BoundTarget>()
 
-  constructor(private readonly page: Page) {}
+  constructor(
+    private readonly page: Page,
+    private readonly beforeOperation: (
+      operation?: 'navigate',
+    ) => void = () => {},
+  ) {}
 
-  private async guarded<T>(operation: () => Promise<T>): Promise<T> {
+  private async guarded<T>(
+    operation: () => Promise<T>,
+    kind?: 'navigate',
+  ): Promise<T> {
     try {
+      this.beforeOperation(kind)
+
       if (this.page.isClosed()) {
         throw new BrowserSurfaceError('session_closed')
       }
@@ -194,8 +204,9 @@ export class BrowserSurface implements SurfaceAdapter<BrowserHandle> {
       await this.page.goto(url, {
         timeout: remaining(),
         waitUntil: 'domcontentloaded',
+        signal: options.signal,
       })
-    })
+    }, 'navigate')
   }
 
   async interact(handle: BrowserHandle, action: Interaction, options: Options) {
@@ -219,14 +230,19 @@ export class BrowserSurface implements SurfaceAdapter<BrowserHandle> {
 
       const locator = await this.resolveHandle(handle, remaining)
 
+      this.beforeOperation()
+
       if (action.kind === 'click') {
-        await locator.click({ timeout: remaining() })
+        await locator.click({ timeout: remaining(), signal: options.signal })
       } else if (action.kind === 'fill') {
-        await locator.fill(action.value.value, { timeout: remaining() })
+        await locator.fill(action.value.value, {
+          timeout: remaining(),
+          signal: options.signal,
+        })
       } else {
         await locator.selectOption(
           { value: action.value.value },
-          { timeout: remaining() },
+          { timeout: remaining(), signal: options.signal },
         )
       }
     })
@@ -237,9 +253,18 @@ export class BrowserSurface implements SurfaceAdapter<BrowserHandle> {
       const remaining = deadline(options.timeoutMs)
       const locator = await this.resolveHandle(handle, remaining)
 
-      await locator.waitFor({ state: 'visible', timeout: remaining() })
+      await locator.waitFor({
+        state: 'visible',
+        timeout: remaining(),
+        signal: options.signal,
+      })
 
-      const text = await locator.innerText({ timeout: remaining() })
+      this.beforeOperation()
+
+      const text = await locator.innerText({
+        timeout: remaining(),
+        signal: options.signal,
+      })
 
       if (text.length > 4096) {
         throw new BrowserSurfaceError('unexpected_state')
@@ -276,6 +301,7 @@ export class BrowserSurface implements SurfaceAdapter<BrowserHandle> {
           await this.page.waitForURL((url) => url.href === checkpoint.url, {
             timeout: remaining(),
             waitUntil: 'domcontentloaded',
+            signal: options.signal,
           })
         } else {
           const found = await this.unique(checkpoint.target, remaining)
@@ -290,13 +316,16 @@ export class BrowserSurface implements SurfaceAdapter<BrowserHandle> {
 
           await found.locator.waitFor({
             state: 'visible',
+            signal: options.signal,
             timeout: remaining(),
           })
 
           if (checkpoint.kind === 'text_equals') {
             while (
-              (await found.locator.innerText({ timeout: remaining() })) !==
-              checkpoint.expected.value
+              (await found.locator.innerText({
+                timeout: remaining(),
+                signal: options.signal,
+              })) !== checkpoint.expected.value
             ) {
               await delay(Math.min(25, remaining()))
             }
