@@ -4,7 +4,7 @@ Learn UI workflows once. Replay them reliably. Hand off when needed.
 
 ## Status
 
-Member search uses anonymous **local Convex** with a shadcn React interface. The directory shows members immediately and filters 250 ms after typing stops; Enter applies the query immediately. The capability contracts are implemented. Member profiles and savings details are implemented. Discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
+Member search uses anonymous **local Convex** with a shadcn React interface. The directory shows members immediately and filters 250 ms after typing stops; Enter applies the query immediately. The capability contracts are implemented. Member profiles and savings details are implemented. The browser adapter now executes UI operations and checks through Playwright; policy enforcement and richer sanitized observation are next. Discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
 
 ## Setup and local development
 
@@ -59,7 +59,7 @@ node scripts/convex-local.mjs run fixtures:seed '{"reset":true}'
 
 The unavailable scenario persists until changed. Slow simulates a 1.5-second loading state and automatically returns to normal; run it while a search is visible. Its scheduled recovery cannot overwrite a newer scenario. These internal mutations are accessible through the local CLI, not the public browser API. Seeding is idempotent and preserves existing records and scenario state; use normal to restore availability.
 
-The denied and expired scenarios block profile and savings reads, including direct account-panel URLs. Search remains available for these scenarios. **Restore demo session** returns an expired demo to normal on the same page; it cannot bypass denied access. These are shared training scenarios across all tabs, not real authentication or per-user sessions. The public restore mutation only clears expiry. **Close account… → Check permission** always returns a backend denial and never changes a record.
+The denied and expired scenarios block profile and savings reads, including direct account-panel URLs. Search remains available for these scenarios. **Restore demo session** returns an expired demo to normal on the same page; it cannot bypass denied access. These are shared training scenarios across all tabs, not real authentication or per-user sessions. The public restore mutation only clears expiry. **Close account → Check permission** always returns a backend denial and never changes a record.
 
 The savings panel uses a titled same-origin iframe for later frame-aware automation. It sizes to its contents; account closure requires a confirmation before checking permission. The frame is a navigation boundary, not a security boundary. Known fixture balances are `DEMO-001: 12450.75 USD`, `DEMO-002: 8320.10 USD`, and `DEMO-003: 560.00 USD`. Explicit reset restores these three demo members/accounts and normal availability; it preserves unrelated records. Ordinary startup preserves existing balances.
 
@@ -70,10 +70,12 @@ Browser tests cover search → profile → savings for two members, frame identi
 - React, React Router, TypeScript, Vite, React Compiler, Tailwind, and shadcn/ui (Radix Nova).
 - Convex functions, indexed database, subscriptions, and internal fixture mutations under `convex/`.
 - Browser-safe generated API references/types connect the frontend to Convex; fixture records stay in backend modules.
-- Playwright for browser tests and future automation; Zod for versioned automation contracts.
+- Playwright for browser tests and browser execution primitives; Zod for versioned automation contracts.
 - Anthropic TypeScript SDK for future discovery; no API key needed yet.
 
 Express and its direct type dependency are removed, along with the HTTP routes, proxy, shared REST schemas, and the old process launcher. Automation remains separate under `automation/` and must interact through the target UI, never through Convex functions or database reads.
+
+See [Browser primitives](docs/BROWSER.md) for supported operations, limits, and the focused test command. There is no discovery/replay CLI yet.
 
 See [Contract boundaries](docs/CONTRACTS.md). The handwritten capability fixture is a schema example, not discovery evidence; its locators will be aligned with the completed banking UI when replay is implemented.
 
