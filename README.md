@@ -4,7 +4,7 @@ Learn UI workflows once. Replay them reliably. Hand off when needed.
 
 ## Status
 
-Member search uses anonymous **local Convex** with a shadcn React interface. Results update 250 ms after typing stops; Enter or Search now submits immediately. The capability contracts are implemented. Profiles, savings details, discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
+Member search uses anonymous **local Convex** with a shadcn React interface. Results update 250 ms after typing stops; Enter submits immediately. The capability contracts are implemented. Profiles, savings details, discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
 
 ## Setup and local development
 

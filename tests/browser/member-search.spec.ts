@@ -56,7 +56,7 @@ test('rapid edits and clearing cannot show stale results', async ({ page }) => {
 })
 
 test('blank input stays idle and whitespace is validated', async ({ page }) => {
-  await expect(page.getByRole('button', { name: 'Search now' })).toBeDisabled()
+  await expect(page.getByText('Ready to find a member')).toBeVisible()
   await page.getByLabel('Member ID or name').fill('   ')
   await expect(page.getByRole('alert')).toContainText(
     'Enter a member ID or name',

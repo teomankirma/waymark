@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { useQueries, useConvexConnectionState } from 'convex/react'
 import type { FunctionReturnType } from 'convex/server'
 import { api } from '../../convex/_generated/api'
-import { Search, UsersRound } from 'lucide-react'
+import { UsersRound } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -83,25 +82,19 @@ export function MemberSearch() {
             className="space-y-3"
           >
             <Label htmlFor="member-query">Member ID or name</Label>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Input
-                id="member-query"
-                name="query"
-                value={query}
-                required
-                maxLength={64}
-                autoComplete="off"
-                placeholder="e.g. DEMO-001 or Morgan"
-                className="h-10 sm:max-w-md"
-                aria-invalid={invalid}
-                aria-describedby={invalid ? 'query-error' : 'query-hint'}
-                onChange={(event) => setQuery(event.target.value)}
-              />
-              <Button type="submit" disabled={!valid} className="h-10 px-5">
-                <Search aria-hidden="true" />
-                Search now
-              </Button>
-            </div>
+            <Input
+              id="member-query"
+              name="query"
+              value={query}
+              required
+              maxLength={64}
+              autoComplete="off"
+              placeholder="e.g. DEMO-001 or Morgan"
+              className="h-10 sm:max-w-md"
+              aria-invalid={invalid}
+              aria-describedby={invalid ? 'query-error' : 'query-hint'}
+              onChange={(event) => setQuery(event.target.value)}
+            />
             {invalid ? (
               <p
                 id="query-error"
