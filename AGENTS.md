@@ -9,10 +9,11 @@ The repository currently contains a shadcn member-search, profile, and savings f
 ## Stack and commands
 
 - Use npm and retain package-lock.json. Use `npm ci` for reproducible installs.
-- Frontend: React + TypeScript + Vite, with the existing React Compiler enabled.
+- Frontend: React + React Router + TypeScript + Vite, with the existing React Compiler enabled.
 - Styling: Tailwind CSS through @tailwindcss/vite. Use shadcn/ui for all UI components, composing its primitives for application components. Keep semantic HTML for document structure and preserve accessibility.
 - Follow React best practices: focused components, explicit typed props, minimal state, derived values during render, effects only for external synchronization, and no unnecessary manual memoization with React Compiler.
 - Backend: anonymous local Convex only; no cloud deployment or sign-in. Use scripts/convex-local.mjs for CLI commands. Automation: Playwright. Runtime schemas: Zod for artifacts, Convex validators for backend functions.
+- Treat basic usability as acceptance for every feature PR, not future polish. Use visible navigation actions, preserve search in the URL, and verify keyboard/mobile flows. See docs/UX.md.
 - Search is reactive with a short debounce; do not require submission to filter. Keep the UI modern and accessible, including table-based results and any frame boundary required by the assignment.
 - Discovery: Anthropic TypeScript SDK behind a provider boundary; tsx runs scripts. Notify the user when a live discovery run first needs ANTHROPIC_API_KEY and have them configure it locally; never ask them to send the key in chat.
 - Keep server code and secrets out of browser imports and bundles.

@@ -37,10 +37,10 @@ Acceptance: contracts reject malformed actions, unsupported artifact versions, i
 
 Suggested branches: `member-search`, then `account-details`.
 
-Status: member-search merged in PR #4. Account-details implemented, pending review. Indexed ID/name-prefix lookup with automatic filtering, shadcn table, loading/empty/error states, normal/slow/unavailable fixtures, and Convex/browser tests are complete. Profiles, savings details with exact decimal balances, a titled same-origin frame, permission/session scenarios, fixture reset, and a backend-denied mock closure action are implemented in the account-details slice. Training access/session states are shared fixtures, not production authentication.
+Status: member-search merged in PR #4. Account-details implemented, pending review. Indexed partial ID/name lookup with automatic filtering, shadcn table, loading/empty/error states, normal/slow/unavailable fixtures, and Convex/browser tests are complete. Profiles, savings details with exact decimal balances, a titled same-origin frame, permission/session scenarios, fixture reset, and a backend-denied mock closure action are implemented in the account-details slice. Training access/session states are shared fixtures, not production authentication.
 
 - Build an anonymous local Convex backend with fictional fixtures and a React/Tailwind interface for search, profile, and savings account views.
-- Use a modern shadcn interface with debounced search-as-you-type, table-based results, and a frame boundary where required for automation coverage. Do not make UX artificially outdated. Preserve labels and keyboard access; no test IDs.
+- Use a modern shadcn interface with forgiving partial search, immediately browsable table results, visible profile actions, URL-preserved queries, compact profile/account navigation, and a frame boundary where required for automation coverage. Basic UX is acceptance for each slice, not deferred to later PRs. Do not make UX artificially outdated. Preserve labels and keyboard access; no test IDs.
 - Add deterministic fixture scenarios for unknown members, validation errors, denied access, slow/failed loads, and session expiry. Keep scenario setup outside the automation's observation/action interface.
 - Include a restricted mock account action for policy verification; implement no real financial transactions.
 - Provide repeatable fixture reset and commands to start frontend/backend together or separately.
