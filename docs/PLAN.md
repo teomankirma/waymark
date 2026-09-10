@@ -8,7 +8,7 @@ The first workflow is: search for a fictional member, open their profile, open t
 
 ## Current baseline
 
-Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, local Convex, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. Milestone 1 contracts and CI merged in PR #3. Member search merged in PR #4 with a shadcn UI, fictional local Convex backend, live debounced search, and Convex/browser tests. Account details merged in PR #5 with profiles, savings, a named frame, and training access/session scenarios. Browser execution primitives are implemented in the browser-executor slice, pending review; the shared policy executor, discovery, replay, and handoff remain.
+Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, local Convex, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. Milestone 1 contracts and CI merged in PR #3. Member search merged in PR #4 with a shadcn UI, fictional local Convex backend, live debounced search, and Convex/browser tests. Account details merged in PR #5 with profiles, savings, a named frame, and training access/session scenarios. Browser primitives merged in PR #6; readability enforcement merged in PR #7. The shared policy executor is implemented in the execution-policy slice, pending review. Discovery, replay, and complete handoff remain.
 
 The user selected local Convex instead of Express and automatic filtering while typing. Keep the backend anonymous/local, install official Convex agent skills at project level, and preserve the separate UI-only automation boundary.
 
@@ -51,7 +51,7 @@ Acceptance: a person can complete the flow. Browser tests verify identity, balan
 
 Suggested branches: `browser-executor`, then `execution-policy`.
 
-Status: browser execution primitives implemented, pending review. See [Browser primitives](BROWSER.md) for exact targeting, operations, timeout/error behavior, and tests. Observation is metadata-only and evidence capture fails closed. The shared policy/ownership executor, richer sanitized observation, and masked evidence remain in the execution-policy slice.
+Status: browser primitives merged in PR #6. The shared policy executor is implemented, pending review. See [Browser primitives](BROWSER.md) for exact targeting, operations, timeout/error behavior, and tests. See [Shared policy executor](EXECUTION.md) for explicit grants, route guards, ownership, approved-label observations, and sanitized JSONL events. Screenshot capture remains unavailable until a trustworthy masking plan exists; no unmasked evidence is saved. Verified human resume and discovery remain later milestones.
 
 - Implement Playwright observation and a small action vocabulary: navigate, click, fill, select, read, and assert state.
 - Resolve controls using frame scope, roles/labels/text, and explicit structural fallback descriptions. Require one valid target; fail safely on ambiguity.

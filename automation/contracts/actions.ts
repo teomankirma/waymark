@@ -83,3 +83,5 @@ export const stepSchema = z.strictObject({
 export type Action = z.infer<typeof actionSchema>
 export type Target = z.infer<typeof targetSchema>
 export type Checkpoint = z.infer<typeof checkpointSchema>
+
+export type Step = z.infer<typeof stepSchema>

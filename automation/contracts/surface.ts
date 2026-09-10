@@ -1,4 +1,4 @@
-import type { Action, Checkpoint, Target } from './actions.ts'
+import type { Action, Checkpoint, Step, Target } from './actions.ts'
 import type { Evidence } from './execution.ts'
 
 export interface Observation {
@@ -29,6 +29,7 @@ type Bound<T> = T extends { kind: 'input'; name: string }
       ? { [Key in keyof T]: Bound<T[Key]> }
       : T
 
+export type BoundStep = Bound<Step>
 export type BoundTarget = Bound<Target>
 export type BoundCheckpoint = Bound<Checkpoint>
 export type Interaction = Extract<
