@@ -1,6 +1,6 @@
 # Browser execution primitives
 
-`BrowserSurface` implements the existing `SurfaceAdapter` interface with Playwright. This is the first browser-executor slice: it operates one caller-owned page. The next slice adds the shared policy/ownership-checking executor and evidence redaction. Discovery and replay must eventually call that executor, never this low-level adapter directly.
+`BrowserSurface` implements the existing `SurfaceAdapter` interface with Playwright. This is the first browser-executor slice: it operates one caller-owned page. The [shared PolicyExecutor](EXECUTION.md) now wraps this adapter with grants, navigation checks, ownership, and sanitized events. Discovery and replay must call that executor, never this low-level adapter directly.
 
 ## Operations
 

@@ -4,7 +4,7 @@ Learn UI workflows once. Replay them reliably. Hand off when needed.
 
 ## Status
 
-Member search uses anonymous **local Convex** with a shadcn React interface. The directory shows members immediately and filters 250 ms after typing stops; Enter applies the query immediately. The capability contracts are implemented. Member profiles and savings details are implemented. The browser adapter now executes UI operations and checks through Playwright; policy enforcement and richer sanitized observation are next. Discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
+Member search uses anonymous **local Convex** with a shadcn React interface. The directory shows members immediately and filters 250 ms after typing stops; Enter applies the query immediately. The capability contracts are implemented. Member profiles and savings details are implemented. The browser adapter now executes UI operations and checks through Playwright; a shared policy executor adds explicit grants, navigation checks, ownership, approved-label observations, and sanitized event logs. Discovery, replay, and human takeover remain on the [implementation plan](docs/PLAN.md).
 
 ## Setup and local development
 
@@ -75,6 +75,8 @@ Browser tests cover search → profile → savings for two members, frame identi
 - Anthropic TypeScript SDK for future discovery; no API key needed yet.
 
 Express and its direct type dependency are removed, along with the HTTP routes, proxy, shared REST schemas, and the old process launcher. Automation remains separate under `automation/` and must interact through the target UI, never through Convex functions or database reads.
+
+See [Shared policy executor](docs/EXECUTION.md) for safety boundaries and its focused test command. No API key is needed; screenshot capture and verified human resume remain pending.
 
 See [Browser primitives](docs/BROWSER.md) for supported operations, limits, and the focused test command. There is no discovery/replay CLI yet.
 
