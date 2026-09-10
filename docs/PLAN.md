@@ -8,7 +8,7 @@ The first workflow is: search for a fictional member, open their profile, open t
 
 ## Current baseline
 
-Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, local Convex, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. Milestone 1 contracts and CI merged in PR #3. Member search merged in PR #4 with a shadcn UI, fictional local Convex backend, live debounced search, and Convex/browser tests. The account-details slice implements profiles, savings, a named frame, and training access/session scenarios, pending review. Executor, discovery, replay, and handoff remain.
+Setup is merged in PR #1. React, TypeScript, Vite, React Compiler, Tailwind, local Convex, Playwright, the Anthropic SDK, Zod, and tsx are installed. Prettier, project instructions, and local skills are configured. Milestone 1 contracts and CI merged in PR #3. Member search merged in PR #4 with a shadcn UI, fictional local Convex backend, live debounced search, and Convex/browser tests. Account details merged in PR #5 with profiles, savings, a named frame, and training access/session scenarios. Browser execution primitives are implemented in the browser-executor slice, pending review; the shared policy executor, discovery, replay, and handoff remain.
 
 The user selected local Convex instead of Express and automatic filtering while typing. Keep the backend anonymous/local, install official Convex agent skills at project level, and preserve the separate UI-only automation boundary.
 
@@ -37,7 +37,7 @@ Acceptance: contracts reject malformed actions, unsupported artifact versions, i
 
 Suggested branches: `member-search`, then `account-details`.
 
-Status: member-search merged in PR #4. Account-details implemented, pending review. Indexed partial ID/name lookup with automatic filtering, shadcn table, loading/empty/error states, normal/slow/unavailable fixtures, and Convex/browser tests are complete. Profiles, savings details with exact decimal balances, a titled same-origin frame, permission/session scenarios, fixture reset, and a backend-denied mock closure action are implemented in the account-details slice. Training access/session states are shared fixtures, not production authentication.
+Status: member-search merged in PR #4. Account-details merged in PR #5. Indexed partial ID/name lookup with automatic filtering, shadcn table, loading/empty/error states, normal/slow/unavailable fixtures, and Convex/browser tests are complete. Profiles, savings details with exact decimal balances, a titled same-origin frame, permission/session scenarios, fixture reset, and a backend-denied mock closure action are implemented in the account-details slice. Training access/session states are shared fixtures, not production authentication.
 
 - Build an anonymous local Convex backend with fictional fixtures and a React/Tailwind interface for search, profile, and savings account views.
 - Use a modern shadcn interface with forgiving partial search, immediately browsable table results, visible profile actions, URL-preserved queries, compact profile/account navigation, and a frame boundary where required for automation coverage. Basic UX is acceptance for each slice, not deferred to later PRs. Do not make UX artificially outdated. Preserve labels and keyboard access; no test IDs.
@@ -50,6 +50,8 @@ Acceptance: a person can complete the flow. Browser tests verify identity, balan
 ## 3. Browser executor, policy, and evidence
 
 Suggested branches: `browser-executor`, then `execution-policy`.
+
+Status: browser execution primitives implemented, pending review. See [Browser primitives](BROWSER.md) for exact targeting, operations, timeout/error behavior, and tests. Observation is metadata-only and evidence capture fails closed. The shared policy/ownership executor, richer sanitized observation, and masked evidence remain in the execution-policy slice.
 
 - Implement Playwright observation and a small action vocabulary: navigate, click, fill, select, read, and assert state.
 - Resolve controls using frame scope, roles/labels/text, and explicit structural fallback descriptions. Require one valid target; fail safely on ambiguity.
